@@ -1,0 +1,11 @@
+.env
+.DS_Store
+bin/
+obj/
+node_modules/
+dist/
+.vs/
+*.user
+
+# Bitácora de trabajo interna — no se publica en el repo (a pedido explícito)
+_plan/

@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/10.Transversal/">
+    <Project Path="src/Osint.Common/Osint.Common.csproj" />
+    <Project Path="src/Osint.Mapper/Osint.Mapper.csproj" />
+    <Project Path="src/Osint.Logging/Osint.Logging.csproj" />
+    <Project Path="src/Osint.Security/Osint.Security.csproj" />
+  </Folder>
+  <Folder Name="/20.Domain/">
+    <Project Path="src/Osint.Domain/Osint.Domain.csproj" />
+  </Folder>
+  <Folder Name="/30.Infraestructura/">
+    <Project Path="src/Osint.Infrastructure/Osint.Infrastructure.csproj" />
+    <Project Path="src/Osint.Persistence/Osint.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/40.Application/">
+    <Project Path="src/Osint.Application/Osint.Application.csproj" />
+    <Project Path="src/Osint.Validator/Osint.Validator.csproj" />
+  </Folder>
+  <Folder Name="/50.Presentation/">
+    <Project Path="src/Osint.WebApi/Osint.WebApi.csproj" />
+  </Folder>
+</Solution>

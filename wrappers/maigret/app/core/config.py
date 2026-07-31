@@ -1,0 +1,6 @@
+import os
+
+TOOL_NAME = "maigret"
+SCAN_TIMEOUT_SECONDS = int(os.getenv("SCAN_TIMEOUT_SECONDS", "90"))
+PER_SITE_TIMEOUT_SECONDS = int(os.getenv("PER_SITE_TIMEOUT_SECONDS", "15"))
+TOP_SITES_COUNT = int(os.getenv("TOP_SITES_COUNT", "300"))

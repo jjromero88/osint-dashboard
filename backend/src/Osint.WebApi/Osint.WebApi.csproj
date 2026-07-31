@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Osint.Application\Osint.Application.csproj" />
+    <ProjectReference Include="..\Osint.Infrastructure\Osint.Infrastructure.csproj" />
+    <ProjectReference Include="..\Osint.Persistence\Osint.Persistence.csproj" />
+    <ProjectReference Include="..\Osint.Mapper\Osint.Mapper.csproj" />
+    <ProjectReference Include="..\Osint.Validator\Osint.Validator.csproj" />
+    <ProjectReference Include="..\Osint.Logging\Osint.Logging.csproj" />
+    <ProjectReference Include="..\Osint.Common\Osint.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,139 @@
+networks:
+  osint-net:
+    name: osint-net
+    external: true
+
+volumes:
+  osint-spiderfoot-data:
+
+services:
+
+  # --- Herramientas OSINT con HTTP nativo ---
+  osint-phoneinfoga:
+    image: sundowndev/phoneinfoga:latest
+    platform: linux/amd64   # la imagen no publica manifest arm64; corre vía emulación en Apple Silicon
+    container_name: osint-phoneinfoga
+    command: serve
+    ports:
+      - "5010:5000"   # 5000 lo ocupa AirPlay Receiver en macOS; puerto interno sigue en 5000 (red osint-net)
+    networks: [osint-net]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:5000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  osint-spiderfoot:
+    build:
+      context: https://github.com/smicallef/spiderfoot.git
+    container_name: osint-spiderfoot
+    volumes:
+      - osint-spiderfoot-data:/var/lib/spiderfoot
+    ports:
+      - "5001:5001"
+    networks: [osint-net]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: "1.0"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:5001/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # theHarvester tiene API REST oficial propia (FastAPI, Swagger en /docs) — NO es
+  # "solo CLI" como asumía el plan original; se trata como HTTP nativo, sin wrapper.
+  # Fuente: Dockerfile oficial (ENTRYPOINT restfulHarvest) + theHarvester/lib/api/api.py
+  # en github.com/laramies/theHarvester. Imagen oficial: ghcr.io/laramies/theharvester.
+  osint-harvester:
+    image: ghcr.io/laramies/theharvester:latest
+    container_name: osint-harvester
+    ports:
+      - "8001:80"
+    networks: [osint-net]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: "1.0"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:80/', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # --- Wrappers CLI (patrón hexagonal: api/services/adapters/schemas/core) ---
+  osint-holehe-wrapper:
+    build: ./wrappers/holehe
+    container_name: osint-holehe-wrapper
+    ports: ["8003:8003"]
+    networks: [osint-net]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8003/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  osint-maigret-wrapper:
+    build: ./wrappers/maigret
+    container_name: osint-maigret-wrapper
+    ports: ["8002:8002"]
+    networks: [osint-net]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8002/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # --- Backend / Frontend (se construyen en los puntos 5 y 6) ---
+  # osint-backend:
+  #   build: ./backend
+  #   container_name: osint-backend
+  #   ports: ["5080:8080"]
+  #   networks: [osint-net]
+  #   environment:
+  #     ConnectionStrings__Default: "Server=sql2025,1433;Database=osint;User Id=sa;Password=${SQLSERVER_SA_PASSWORD};TrustServerCertificate=True"
+  #     Tools__PhoneInfoga: "http://osint-phoneinfoga:5000"
+  #     Tools__SpiderFoot:  "http://osint-spiderfoot:5001"
+  #     Tools__Harvester:   "http://osint-harvester:80"
+  #     Tools__Maigret:     "http://osint-maigret-wrapper:8002"
+  #     Tools__Holehe:      "http://osint-holehe-wrapper:8003"
+  #   restart: unless-stopped
+  #
+  # osint-frontend:
+  #   build: ./frontend
+  #   container_name: osint-frontend
+  #   ports: ["8080:80"]
+  #   networks: [osint-net]
+  #   restart: unless-stopped
+
+# Nota: sql2025 (SQL Server) NO se gestiona desde este compose — es un contenedor
+# preexistente, iniciado manualmente por el usuario. Se conecta a la red `osint-net`
+# vía `docker network connect osint-net sql2025` para que el resto de servicios lo
+# resuelvan por su nombre de contenedor (Server=sql2025,1433 en la cadena de conexión).
+# En producción, phoneinfoga/spiderfoot/wrappers no deben publicar puerto al host:
+# solo el backend los debe alcanzar por la red interna osint-net.
