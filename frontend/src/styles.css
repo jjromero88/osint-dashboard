@@ -1,0 +1,192 @@
+@import 'tailwindcss';
+
+/* Fuentes autohospedadas — ver design-system.md §2. Sin dependencia de
+   CDN de Google Fonts en runtime. */
+@font-face {
+  font-family: 'Advent Pro';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('assets/fonts/advent-pro-variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('assets/fonts/jetbrains-mono-variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('assets/fonts/rajdhani-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('assets/fonts/rajdhani-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('assets/fonts/rajdhani-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('assets/fonts/rajdhani-700.woff2') format('woff2');
+}
+
+/* Tokens del sistema — ver frontend/design-system.md (fuente de verdad). */
+@theme {
+  --color-void: #0a0a0a;
+  --color-surface: #141414;
+  --color-surface-raised: #1c1c1c;
+  --color-line: #2e2e2e;
+  --color-ink: #f2f2f2;
+  --color-ink-muted: #8a8a8a;
+  --color-accent-signal: #fcee0a;
+  --color-accent-danger: #ff2b4c;
+  --color-accent-success: #39ff14;
+  --color-accent-info: #00e5ff;
+  --color-accent-warning: #f9c80e;
+
+  --font-display: 'Advent Pro', system-ui, sans-serif;
+  --font-body: 'Rajdhani', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius-signal: 2px;
+
+  --shadow-flat: 0 0 0 1px var(--color-line);
+  --shadow-raised: 0 0 8px 1px color-mix(in srgb, var(--color-accent-signal) 40%, transparent);
+  --shadow-status-success: 0 0 8px 1px color-mix(in srgb, var(--color-accent-success) 45%, transparent);
+  --shadow-status-danger: 0 0 8px 1px color-mix(in srgb, var(--color-accent-danger) 45%, transparent);
+  --shadow-status-info: 0 0 8px 1px color-mix(in srgb, var(--color-accent-info) 45%, transparent);
+
+  --animate-status-pulse: status-pulse 1.2s ease-in-out infinite;
+  --animate-stagger-reveal: stagger-reveal 300ms ease-out both;
+  --animate-scan-sweep: scan-sweep 400ms ease-out;
+  --animate-glitch-flicker: glitch-flicker 200ms steps(2, end);
+}
+
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes stagger-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scan-sweep {
+  from {
+    background-position: -100% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes glitch-flicker {
+  0% {
+    transform: translate(0);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(-1px, 1px);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(1px, -1px);
+    opacity: 1;
+  }
+  75% {
+    transform: translate(-1px, 0);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(0);
+    opacity: 1;
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-void);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent-signal);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+/* Vocabulario de componentes — ver design-system.md §7. Compartido por
+   shell, búsqueda básica y búsqueda avanzada; evita repetir la misma
+   cadena de utilidades en las 3 pantallas. */
+@layer components {
+  .panel {
+    @apply relative border border-line bg-surface;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  }
+
+  .field {
+    @apply w-full rounded-[var(--radius-signal)] border border-line bg-surface px-3 py-2 font-body text-sm text-ink transition-colors placeholder:text-ink-muted focus:border-accent-signal;
+  }
+
+  .field-label {
+    @apply font-body text-xs font-semibold uppercase tracking-[0.05em] text-ink-muted;
+  }
+
+  .btn-primary {
+    @apply rounded-[var(--radius-signal)] bg-accent-signal px-4 py-2 font-body text-sm font-bold uppercase tracking-[0.05em] text-void transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:animate-status-pulse disabled:opacity-70;
+  }
+
+  .badge-tool {
+    @apply inline-flex items-center gap-1 rounded-[var(--radius-signal)] border border-line px-1.5 py-0.5 font-mono text-[0.7rem] uppercase tracking-[0.04em] text-ink-muted;
+  }
+}

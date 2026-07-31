@@ -1,0 +1,45 @@
+@if (_notif.mensaje(); as msg) {
+  <div
+    class="animate-stagger-reveal fixed bottom-4 right-4 z-50 flex max-w-sm items-start gap-3 rounded-[var(--radius-signal)] border border-line px-4 py-3 font-body text-sm"
+    [class]="_tono(msg.tipo).surface"
+    [style.box-shadow]="_tono(msg.tipo).glow"
+  >
+    <span [class]="_tono(msg.tipo).icon" [class.animate-glitch-flicker]="msg.tipo === 'error'">
+      @switch (msg.tipo) {
+        @case ('exito') {
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" class="size-5">
+            <circle cx="10" cy="10" r="7.5" />
+            <path d="M7 10.3l2 2 4-4.4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        }
+        @case ('error') {
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" class="size-5">
+            <path d="M10 2.5l8 14H2l8-14z" stroke-linejoin="round" />
+            <path d="M10 8v4" stroke-linecap="round" />
+            <circle cx="10" cy="14.6" r="0.9" fill="currentColor" stroke="none" />
+          </svg>
+        }
+        @default {
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" class="size-5">
+            <circle cx="10" cy="10" r="7.5" />
+            <path d="M10 9v4.5" stroke-linecap="round" />
+            <circle cx="10" cy="6.3" r="0.9" fill="currentColor" stroke="none" />
+          </svg>
+        }
+      }
+    </span>
+
+    <p class="flex-1 text-ink">{{ msg.texto }}</p>
+
+    <button
+      type="button"
+      (click)="_notif.limpiar()"
+      aria-label="Cerrar notificación"
+      class="text-ink-muted transition-colors hover:text-ink"
+    >
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" class="size-4">
+        <path d="M3 3l10 10M13 3L3 13" stroke-linecap="round" />
+      </svg>
+    </button>
+  </div>
+}

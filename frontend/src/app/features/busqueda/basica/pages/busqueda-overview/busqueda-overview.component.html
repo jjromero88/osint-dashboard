@@ -1,0 +1,102 @@
+<h1 class="text-2xl uppercase tracking-[0.04em] text-ink">Búsqueda básica</h1>
+
+<form class="panel mt-6 flex flex-wrap items-end gap-4 p-5" (ngSubmit)="buscar()">
+  <label class="flex flex-col gap-1.5">
+    <span class="field-label">Tipo</span>
+    <select [(ngModel)]="tipoSeleccionado" name="tipo" class="field">
+      @for (t of tipos(); track t.tipo) {
+        <option [value]="t.tipo">{{ t.descripcion }}</option>
+      }
+    </select>
+  </label>
+
+  @if (esTelefono) {
+    <label class="flex flex-col gap-1.5">
+      <span class="field-label">País</span>
+      <select [(ngModel)]="paisSeleccionado" name="pais" class="field">
+        @for (p of paises(); track p.codigo + p.nombre) {
+          <option [value]="p.codigo">{{ p.nombre }} ({{ p.codigo }})</option>
+        }
+      </select>
+    </label>
+    <label class="flex flex-1 min-w-48 flex-col gap-1.5">
+      <span class="field-label">Número local</span>
+      <input
+        type="text"
+        [(ngModel)]="numeroLocal"
+        name="numeroLocal"
+        placeholder="ej. 912345678 (sin el código de país)"
+        class="field"
+      />
+    </label>
+  } @else {
+    <label class="flex flex-1 min-w-64 flex-col gap-1.5">
+      <span class="field-label">Objetivo</span>
+      <input
+        type="text"
+        [(ngModel)]="objetivo"
+        name="objetivo"
+        placeholder="ej. usuario_demo, demo@example.com, empresa.com..."
+        class="field"
+      />
+    </label>
+  }
+
+  <button type="submit" [disabled]="buscando()" class="btn-primary">
+    {{ buscando() ? 'Buscando…' : 'Buscar' }}
+  </button>
+</form>
+
+@if (busquedaActual(); as b) {
+  <section class="panel animate-stagger-reveal mt-6 p-5" [style.box-shadow]="_glow(b.estado, b.error)">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h2 class="text-lg uppercase tracking-[0.03em] text-ink">Resultado</h2>
+      <span class="badge-tool" [class]="_estadoClase(b.estado, b.error)">{{ _estadoTexto(b.estado, b.error) }}</span>
+    </div>
+
+    <dl class="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 font-mono text-xs text-ink-muted sm:grid-cols-4">
+      <div><dt class="uppercase tracking-[0.04em]">Tipo</dt><dd class="text-ink">{{ b.tipo }}</dd></div>
+      <div><dt class="uppercase tracking-[0.04em]">Objetivo</dt><dd class="text-ink">{{ b.objetivo }}</dd></div>
+      @if (b.duration_ms !== null) {
+        <div><dt class="uppercase tracking-[0.04em]">Duración</dt><dd class="text-ink">{{ b.duration_ms }} ms</dd></div>
+      }
+    </dl>
+
+    @if (b.error) {
+      <p class="animate-glitch-flicker mt-3 font-body text-sm text-accent-danger">{{ b.error }}</p>
+    }
+
+    <ul class="mt-4 flex flex-col divide-y divide-line">
+      @for (s of b.senales; track s.source_url + s.valor) {
+        <li class="animate-stagger-reveal flex flex-wrap items-center gap-2 py-2.5">
+          <span class="badge-tool">{{ s.herramienta }}</span>
+          <span class="font-body text-sm text-ink-muted">{{ s.tipo }}</span>
+          <span class="font-mono text-sm text-ink">{{ s.valor }}</span>
+          @if (s.source_url) {
+            <a [href]="s.source_url" target="_blank" rel="noopener" class="font-mono text-xs text-accent-info hover:underline">
+              {{ s.source_url }}
+            </a>
+          }
+        </li>
+      } @empty {
+        <li class="py-2.5 font-body text-sm text-ink-muted">Sin señales todavía.</li>
+      }
+    </ul>
+  </section>
+}
+
+<section class="mt-8">
+  <h2 class="text-lg uppercase tracking-[0.03em] text-ink">Historial</h2>
+  <ul class="mt-3 flex flex-col gap-2">
+    @for (h of historial(); track h.busqueda_id) {
+      <li class="panel animate-stagger-reveal flex flex-wrap items-center gap-3 px-4 py-3 font-body text-sm">
+        <span class="badge-tool">{{ h.tipo }}</span>
+        <span class="text-ink">{{ h.objetivo }}</span>
+        <span class="text-ink-muted">{{ h.estado }}</span>
+        <span class="ml-auto font-mono text-xs text-ink-muted">{{ h.senales.length }} señales</span>
+      </li>
+    } @empty {
+      <li class="font-body text-sm text-ink-muted">Sin búsquedas todavía.</li>
+    }
+  </ul>
+</section>
