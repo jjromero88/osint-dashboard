@@ -81,7 +81,9 @@ Reglas:
   sin excepción de brief): los títulos de sección van solos, sin label
   decorativo encima.
 - Escala: H1 `2.5rem`/700, H2 `1.75rem`/700, H3 `1.25rem`/600, Body `1rem`/400,
-  Caption `0.8rem`/400, Mono/data `0.875rem`/400.
+  Caption `0.8rem`/400, Mono/data `0.875rem`/400, Mono/micro `0.7rem`/400
+  (badges de herramienta, timestamps compactos, texto descriptivo bajo un
+  control — el paso más chico de la escala, exclusivo de mono).
 - `line-height`: 1.5 body, 1.2 headings, 1.4 mono/data.
 - Mayúsculas + tracking amplio (`letter-spacing: 0.05em`) en botones y
   badges de herramienta — refuerzo del lenguaje HUD, no en párrafos largos.
@@ -174,6 +176,15 @@ No se reinventa la estructura funcional — solo se reviste:
   ícono SVG, rojo discreto en reposo → rojo saturado + glow en hover —
   ver segundo uso de `accent-danger` en §1). Nunca Unicode/emoji como
   ícono — SVG propio de un solo trazo.
+- **Slider de nivel** (`osint-nivel-slider`, reemplaza el `<select>` de
+  nivel en ambas búsquedas) — lenguaje de "control de potencia" de
+  consola HUD: pista `border-line`, relleno `accent-signal` hasta la
+  posición actual, thumb cuadrado (radio `--radius-signal`) con glow en
+  hover/focus (`--shadow-raised`). 3 marcas clicables (Rápido/Medio/
+  Profundo) en mono/micro, la activa en `accent-signal`. `<input
+  type="range">` real por debajo (no solo visual) para mantener teclado
+  y lector de pantalla — `aria-valuetext` anuncia el nombre del nivel,
+  no el índice.
 
 ## 8. Do's / Don'ts
 

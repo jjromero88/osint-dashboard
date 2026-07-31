@@ -12,7 +12,9 @@ public interface IOsintToolClient
     // Nombre de la herramienta detrás (phoneinfoga|holehe|maigret|theharvester|spiderfoot)
     string Herramienta { get; }
 
-    Task<ResultadoHerramienta> BuscarAsync(string objetivo, CancellationToken cancellationToken);
+    // nivel: rapido|medio|profundo (ver Osint.Application.Common.CatalogoNiveles).
+    // No todas las herramientas lo usan — PhoneInfoga/Holehe/Maigret lo ignoran.
+    Task<ResultadoHerramienta> BuscarAsync(string objetivo, string nivel, CancellationToken cancellationToken);
 
     // Cada herramienta define su propio probe (ruta y forma varían — ver notas del punto 2 de la bitácora)
     Task<bool> EstaSaludableAsync(CancellationToken cancellationToken);

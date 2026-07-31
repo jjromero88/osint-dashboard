@@ -20,6 +20,7 @@ export interface Resumen {
 
 export interface BusquedaAvanzada {
   lote_id: string;
+  nivel: string;
   estado: string;
   hallazgos: Hallazgo[];
   resumen: Resumen;
@@ -31,4 +32,5 @@ export interface BusquedaAvanzadaRequestDto {
   phones: string[];
   domains: string[];
   names: string[];
+  nivel: string;
 }

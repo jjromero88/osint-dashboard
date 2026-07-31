@@ -49,6 +49,7 @@ public class BusquedaService : IBusquedaService
                 busqueda_id = Guid.NewGuid(),
                 tipo = dto.tipo,
                 objetivo = dto.objetivo,
+                nivel = dto.nivel,
                 estado = "queued",
                 fecha_inicio = DateTime.UtcNow
             };

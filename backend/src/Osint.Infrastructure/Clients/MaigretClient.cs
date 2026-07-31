@@ -20,7 +20,9 @@ public class MaigretClient : IOsintToolClient
         _httpClient = httpClient;
     }
 
-    public async Task<ResultadoHerramienta> BuscarAsync(string objetivo, CancellationToken cancellationToken)
+    // Maigret no varía por nivel en esta fase — ver plan-trabajo.md §8.4.1
+    // (fuera de alcance: cambiar --top-sites del wrapper Python por nivel).
+    public async Task<ResultadoHerramienta> BuscarAsync(string objetivo, string nivel, CancellationToken cancellationToken)
     {
         var stopwatch = Stopwatch.StartNew();
         var response = await _httpClient.PostAsJsonAsync("/scan", new { target = objetivo }, cancellationToken);

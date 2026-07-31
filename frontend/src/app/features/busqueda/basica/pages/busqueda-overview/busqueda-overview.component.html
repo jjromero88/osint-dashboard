@@ -42,6 +42,10 @@
     </label>
   }
 
+  <div class="w-full sm:w-64">
+    <osint-nivel-slider [niveles]="niveles()" [valor]="nivelSeleccionado" (valorChange)="nivelSeleccionado = $event" />
+  </div>
+
   <button type="submit" [disabled]="buscando()" class="btn-primary">
     {{ buscando() ? 'Buscando…' : 'Buscar' }}
   </button>
@@ -57,6 +61,7 @@
     <dl class="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 font-mono text-xs text-ink-muted sm:grid-cols-4">
       <div><dt class="uppercase tracking-[0.04em]">Tipo</dt><dd class="text-ink">{{ b.tipo }}</dd></div>
       <div><dt class="uppercase tracking-[0.04em]">Objetivo</dt><dd class="text-ink">{{ b.objetivo }}</dd></div>
+      <div><dt class="uppercase tracking-[0.04em]">Nivel</dt><dd class="text-ink">{{ b.nivel }}</dd></div>
       @if (b.duration_ms !== null) {
         <div><dt class="uppercase tracking-[0.04em]">Duración</dt><dd class="text-ink">{{ b.duration_ms }} ms</dd></div>
       }

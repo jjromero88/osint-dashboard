@@ -6,6 +6,7 @@ public class BusquedaResponseDto
     public string busqueda_id { get; set; } = string.Empty;
     public string tipo { get; set; } = string.Empty;
     public string objetivo { get; set; } = string.Empty;
+    public string nivel { get; set; } = string.Empty;
     public string estado { get; set; } = string.Empty;
     public List<SenalDto> senales { get; set; } = [];
     public string? raw { get; set; }

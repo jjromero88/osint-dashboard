@@ -53,7 +53,7 @@ public class BusquedaWorker : BackgroundService
 
         try
         {
-            var resultado = await toolClient.BuscarAsync(busqueda.objetivo, stoppingToken);
+            var resultado = await toolClient.BuscarAsync(busqueda.objetivo, busqueda.nivel, stoppingToken);
 
             busqueda.estado = resultado.estado;
             busqueda.senales = resultado.senales;

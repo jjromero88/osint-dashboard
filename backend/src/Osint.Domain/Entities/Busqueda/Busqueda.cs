@@ -6,6 +6,7 @@ public class Busqueda
     public Guid busqueda_id { get; set; }
     public string tipo { get; set; } = string.Empty;
     public string objetivo { get; set; } = string.Empty;
+    public string nivel { get; set; } = "medio";
     public string estado { get; set; } = "queued";
     public List<Senal> senales { get; set; } = [];
     public string? raw { get; set; }

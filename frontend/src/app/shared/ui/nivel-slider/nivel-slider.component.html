@@ -1,0 +1,38 @@
+<div class="flex flex-col gap-1.5">
+  <span class="field-label">Nivel</span>
+
+  <div class="relative flex h-6 items-center">
+    <div class="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-line"></div>
+    <div
+      class="absolute left-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-accent-signal transition-[width]"
+      [style.width.%]="porcentaje"
+    ></div>
+    <input
+      type="range"
+      class="nivel-slider-input relative z-10 w-full cursor-pointer appearance-none bg-transparent"
+      min="0"
+      [max]="niveles.length - 1"
+      step="1"
+      [value]="indice"
+      (input)="onInput($event)"
+      [attr.aria-valuetext]="nivelActual?.nombre"
+      aria-label="Nivel de profundidad"
+    />
+  </div>
+
+  <div class="flex justify-between">
+    @for (n of niveles; track n.valor; let i = $index) {
+      <button
+        type="button"
+        class="font-mono text-[0.7rem] uppercase tracking-[0.04em] transition-colors"
+        [class.text-accent-signal]="n.valor === valor"
+        [class.text-ink-muted]="n.valor !== valor"
+        (click)="seleccionar(i)"
+      >
+        {{ n.nombre }}
+      </button>
+    }
+  </div>
+
+  <span class="font-mono text-[0.7rem] text-ink-muted">{{ nivelActual?.descripcion }}</span>
+</div>

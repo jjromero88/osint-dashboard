@@ -133,6 +133,10 @@
       }
       <ng-container [ngTemplateOutlet]="agregar" [ngTemplateOutletContext]="{ lista: names, campo: 'nombre' }" />
     </div>
+
+    <div class="flex flex-col gap-1.5">
+      <osint-nivel-slider [niveles]="niveles()" [valor]="nivelSeleccionado" (valorChange)="nivelSeleccionado = $event" />
+    </div>
   </div>
 
   <button type="submit" [disabled]="buscando()" class="btn-primary self-start">
@@ -146,7 +150,7 @@
       <h2 class="text-lg uppercase tracking-[0.03em] text-ink">Resultado del lote</h2>
       <span class="badge-tool" [class]="_estadoClase(lote.estado)">{{ _estadoTexto(lote.estado) }}</span>
     </div>
-    <p class="mt-2 font-mono text-xs text-ink-muted">hallazgos únicos: {{ lote.resumen.total_unico }}</p>
+    <p class="mt-2 font-mono text-xs text-ink-muted">hallazgos únicos: {{ lote.resumen.total_unico }} · nivel: {{ lote.nivel }}</p>
 
     <ul class="mt-4 flex flex-col divide-y divide-line">
       @for (h of lote.hallazgos; track h.source_url + h.valor) {

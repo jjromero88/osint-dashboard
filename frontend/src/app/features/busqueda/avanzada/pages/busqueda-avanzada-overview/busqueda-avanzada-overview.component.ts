@@ -6,6 +6,9 @@ import { interval, switchMap, takeWhile } from 'rxjs';
 import { NotificationService } from '../../../../../shared/services/notification.service';
 import { Pais } from '../../../../../shared/models/pais.model';
 import { PaisesService } from '../../../../../shared/services/paises.service';
+import { Nivel } from '../../../../../shared/models/nivel.model';
+import { NivelesService } from '../../../../../shared/services/niveles.service';
+import { NivelSliderComponent } from '../../../../../shared/ui/nivel-slider/nivel-slider.component';
 import { BusquedaAvanzada } from '../../models/busqueda-avanzada.model';
 import { BusquedaAvanzadaService } from '../../services/busqueda-avanzada.service';
 
@@ -16,19 +19,21 @@ const ESTADOS_EN_CURSO = ['queued', 'running'];
 // botones agregar/quitar en el template.
 @Component({
   selector: 'osint-busqueda-avanzada-overview',
-  imports: [FormsModule, NgTemplateOutlet],
+  imports: [FormsModule, NgTemplateOutlet, NivelSliderComponent],
   templateUrl: './busqueda-avanzada-overview.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BusquedaAvanzadaOverviewComponent implements OnInit {
   private readonly _service = inject(BusquedaAvanzadaService);
   private readonly _paisesService = inject(PaisesService);
+  private readonly _nivelesService = inject(NivelesService);
   private readonly _notif = inject(NotificationService);
   private readonly _destroyRef = inject(DestroyRef);
 
   loteActual = signal<BusquedaAvanzada | null>(null);
   buscando = signal(false);
   paises = signal<Pais[]>([]);
+  niveles = signal<Nivel[]>([]);
 
   usernames: string[] = [''];
   emails: string[] = [''];
@@ -36,9 +41,11 @@ export class BusquedaAvanzadaOverviewComponent implements OnInit {
   paisTelefonos = '+51';
   domains: string[] = [''];
   names: string[] = [''];
+  nivelSeleccionado = 'medio';
 
   ngOnInit(): void {
     this.paises.set(this._paisesService.getAll());
+    this.niveles.set(this._nivelesService.getAll());
   }
 
   protected agregarInput(lista: string[]): void {
@@ -58,6 +65,7 @@ export class BusquedaAvanzadaOverviewComponent implements OnInit {
       phones: this._limpiar(this.phones).map((n) => (n.startsWith('+') ? n : `${this.paisTelefonos}${n}`)),
       domains: this._limpiar(this.domains),
       names: this._limpiar(this.names),
+      nivel: this.nivelSeleccionado,
     };
 
     if (dto.usernames.length + dto.emails.length + dto.phones.length + dto.domains.length + dto.names.length === 0) {

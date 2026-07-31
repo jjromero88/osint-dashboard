@@ -45,6 +45,7 @@ public class BusquedaAvanzadaService : IBusquedaAvanzadaService
                     busqueda_id = Guid.NewGuid(),
                     tipo = tipo,
                     objetivo = objetivo,
+                    nivel = dto.nivel,
                     estado = "queued",
                     fecha_inicio = DateTime.UtcNow
                 });
@@ -79,6 +80,7 @@ public class BusquedaAvanzadaService : IBusquedaAvanzadaService
             var lote = new Lote
             {
                 lote_id = Guid.NewGuid(),
+                nivel = dto.nivel,
                 estado = "queued",
                 busqueda_ids = busquedas.Select(b => b.busqueda_id).ToList(),
                 fecha_inicio = DateTime.UtcNow
@@ -190,6 +192,7 @@ public class BusquedaAvanzadaService : IBusquedaAvanzadaService
         return new BusquedaAvanzadaResponseDto
         {
             lote_id = lote.lote_id.ToString(),
+            nivel = lote.nivel,
             estado = estadoLote,
             hallazgos = listaHallazgos,
             resumen = resumen

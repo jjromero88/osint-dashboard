@@ -12,6 +12,7 @@ export interface Busqueda {
   busqueda_id: string;
   tipo: string;
   objetivo: string;
+  nivel: string;
   estado: string;
   senales: Senal[];
   raw: string | null;
@@ -24,4 +25,5 @@ export interface Busqueda {
 export interface BusquedaRequestDto {
   tipo: string;
   objetivo: string;
+  nivel: string;
 }

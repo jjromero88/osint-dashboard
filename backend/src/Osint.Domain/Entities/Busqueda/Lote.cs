@@ -4,6 +4,7 @@ namespace Osint.Domain.Entities;
 public class Lote
 {
     public Guid lote_id { get; set; }
+    public string nivel { get; set; } = "medio";
     public string estado { get; set; } = "queued";
     public List<Guid> busqueda_ids { get; set; } = [];
     public DateTime fecha_inicio { get; set; }

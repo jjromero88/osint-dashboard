@@ -23,7 +23,14 @@ public static class DependencyInjection
         services.AddHttpClient<PhoneInfogaClient>(c => c.BaseAddress = new Uri(tools.PhoneInfoga));
         services.AddHttpClient<HoleheClient>(c => c.BaseAddress = new Uri(tools.Holehe));
         services.AddHttpClient<MaigretClient>(c => c.BaseAddress = new Uri(tools.Maigret));
-        services.AddHttpClient<HarvesterClient>(c => c.BaseAddress = new Uri(tools.Harvester));
+        // Timeout default de HttpClient (100s) se queda corto en nivel "profundo"
+        // (varias fuentes externas encadenadas dentro del propio /query de
+        // theHarvester) — probado en vivo, ver plan-trabajo.md §8.4.1.
+        services.AddHttpClient<HarvesterClient>(c =>
+        {
+            c.BaseAddress = new Uri(tools.Harvester);
+            c.Timeout = TimeSpan.FromMinutes(10);
+        });
         // SpiderFoot: /startscan responde 303 — hay que leer el header Location a mano, sin seguir el redirect.
         services.AddHttpClient<SpiderFootClient>(c => c.BaseAddress = new Uri(tools.SpiderFoot))
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });

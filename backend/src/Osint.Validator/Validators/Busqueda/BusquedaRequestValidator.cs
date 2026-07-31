@@ -16,5 +16,9 @@ public class BusquedaRequestValidator : AbstractValidator<BusquedaRequestDto>
         RuleFor(x => x.objetivo)
             .NotEmpty().WithMessage("El campo objetivo es obligatorio.")
             .MaximumLength(300).WithMessage("El campo objetivo no debe exceder 300 caracteres.");
+
+        RuleFor(x => x.nivel)
+            .Must(CatalogoNiveles.EsValido)
+            .WithMessage($"El campo nivel debe ser uno de: {string.Join(", ", CatalogoNiveles.Niveles.Select(n => n.Value))}.");
     }
 }

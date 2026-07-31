@@ -19,7 +19,8 @@ public class HoleheClient : IOsintToolClient
         _httpClient = httpClient;
     }
 
-    public async Task<ResultadoHerramienta> BuscarAsync(string objetivo, CancellationToken cancellationToken)
+    // Holehe no tiene nada que modular por nivel — ver plan-trabajo.md §8.4.1.
+    public async Task<ResultadoHerramienta> BuscarAsync(string objetivo, string nivel, CancellationToken cancellationToken)
     {
         var stopwatch = Stopwatch.StartNew();
         var response = await _httpClient.PostAsJsonAsync("/scan", new { target = objetivo }, cancellationToken);

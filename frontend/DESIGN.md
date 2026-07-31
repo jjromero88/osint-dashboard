@@ -176,6 +176,10 @@ un dato crudo, no prosa" (IDs, URLs, timestamps).
 - **Mono/Data** (400, `0.875rem`, 1.4): IDs (`busqueda_id`, `lote_id`),
   `source_url`, valores de teléfono/email/username, badges de
   herramienta (`[phoneinfoga]`, `[maigret]`, etc.).
+- **Mono/Micro** (400, `0.7rem`, 1.4): el paso más chico de la escala,
+  exclusivo de mono — badges de herramienta cuando conviven con datos
+  densos, marcas de un control (ej. las 3 etiquetas del slider de
+  nivel), texto descriptivo bajo un campo.
 
 ### Named Rules
 **The Data-Is-Mono Rule.** JetBrains Mono se usa exclusivamente para
@@ -288,6 +292,21 @@ redondeadas grandes, recortes múltiples, biselados).
   `glitch-flicker` (200ms, un solo disparo) solo en notificaciones de
   error — el único lugar del sistema donde el "glitch" cyberpunk aparece
   como tal, y siempre ligado a un error real, nunca decorativo.
+
+### Nivel slider (`osint-nivel-slider`)
+- **Style:** pista `circuit-line`, relleno `signal-yellow` hasta la
+  posición actual (barra en capas, no gradiente sincronizado por
+  navegador), thumb cuadrado (radio `2px`) en `signal-yellow` — lenguaje
+  de control de potencia de consola HUD.
+- **Focus/hover:** glow `--shadow-raised` en el thumb; el foco de
+  teclado hereda el `:focus-visible` global (nunca se quita el outline
+  por completo, mismo criterio que el resto de los inputs).
+- **Marcas:** 3 etiquetas clicables (Rápido/Medio/Profundo, mono/micro
+  `0.7rem`), la activa en `signal-yellow`, el resto en `static-gray`.
+- **Accesibilidad:** `<input type="range">` real, no solo visual —
+  `aria-valuetext` anuncia el nombre del nivel (no el índice numérico).
+- Reemplaza al `<select>` de nivel en ambas búsquedas — mismo contrato
+  de dato (`rapido`/`medio`/`profundo`), solo cambia el widget.
 
 ## Do's and Don'ts
 

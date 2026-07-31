@@ -211,4 +211,54 @@
     color: var(--color-accent-danger);
     box-shadow: var(--shadow-status-danger);
   }
+
+  /* Slider de nivel (osint-nivel-slider) — el input real queda casi
+     invisible (solo pista transparente) montado sobre una pista/relleno
+     dibujados aparte en el template; acá solo se tematiza el thumb.
+     Reglas de pseudo-elemento por navegador van separadas a propósito:
+     un selector combinado (`::-webkit-...,  ::-moz-...`) hace que el
+     navegador descarte la regla completa. */
+  .nivel-slider-input {
+    height: 2px;
+  }
+  .nivel-slider-input::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    height: 2px;
+    background: transparent;
+  }
+  .nivel-slider-input::-moz-range-track {
+    height: 2px;
+    background: transparent;
+    border: none;
+  }
+  .nivel-slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    margin-top: -7px;
+    border-radius: var(--radius-signal);
+    background: var(--color-accent-signal);
+    border: none;
+    box-shadow: var(--shadow-flat);
+    transition: box-shadow 150ms;
+    cursor: pointer;
+  }
+  .nivel-slider-input::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-signal);
+    background: var(--color-accent-signal);
+    border: none;
+    box-shadow: var(--shadow-flat);
+    transition: box-shadow 150ms;
+    cursor: pointer;
+  }
+  .nivel-slider-input:hover::-webkit-slider-thumb,
+  .nivel-slider-input:focus-visible::-webkit-slider-thumb {
+    box-shadow: var(--shadow-raised);
+  }
+  .nivel-slider-input:hover::-moz-range-thumb,
+  .nivel-slider-input:focus-visible::-moz-range-thumb {
+    box-shadow: var(--shadow-raised);
+  }
 }

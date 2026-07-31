@@ -6,9 +6,21 @@ using Osint.Domain.Entities;
 namespace Osint.Infrastructure.Clients;
 
 // HTTP nativo (API REST oficial, no wrapper — ver _plan/plan-trabajo.md §0).
-// GET /query?source=crtsh&domain=... — crtsh no requiere API key.
+// GET /query?source=...&domain=... — source acepta varias fuentes separadas
+// por coma (confirmado en su propio OpenAPI).
+//
+// Niveles de profundidad (plan-trabajo.md §8.4.1): las fuentes de cada nivel
+// se verificaron contra el api-keys.yaml real de theHarvester — solo se
+// usan las que NO tienen ninguna entrada ahí (sin mecanismo de clave).
 public class HarvesterClient : IOsintToolClient
 {
+    private static readonly Dictionary<string, (string[] Fuentes, int Limite)> ConfigPorNivel = new()
+    {
+        ["rapido"] = (["crtsh"], 200),
+        ["medio"] = (["crtsh", "certspotter", "rapiddns", "subdomaincenter"], 500),
+        ["profundo"] = (["crtsh", "certspotter", "rapiddns", "subdomaincenter", "urlscan", "sublist3r", "otx", "waybackarchive", "commoncrawl", "threatcrowd"], 1000)
+    };
+
     private readonly HttpClient _httpClient;
 
     public string Tipo => "domain";
@@ -19,11 +31,16 @@ public class HarvesterClient : IOsintToolClient
         _httpClient = httpClient;
     }
 
-    public async Task<ResultadoHerramienta> BuscarAsync(string objetivo, CancellationToken cancellationToken)
+    public async Task<ResultadoHerramienta> BuscarAsync(string objetivo, string nivel, CancellationToken cancellationToken)
     {
         var stopwatch = Stopwatch.StartNew();
-        var url = $"/query?source=crtsh&domain={Uri.EscapeDataString(objetivo)}" +
-                   "&dns_brute=false&dns_lookup=false&proxies=false&shodan=false&take_over=false&api_scan=false&limit=500&start=0";
+        var (fuentes, limite) = ConfigPorNivel.GetValueOrDefault(nivel, ConfigPorNivel["medio"]);
+        // /query espera `source` repetido por cada fuente (array de query params),
+        // no una lista separada por comas — confirmado probando contra la instancia
+        // real: un solo "source=a,b,c" devuelve 400 "Source '...' is not supported".
+        var fuentesQuery = string.Join("&", fuentes.Select(f => $"source={Uri.EscapeDataString(f)}"));
+        var url = $"/query?{fuentesQuery}&domain={Uri.EscapeDataString(objetivo)}" +
+                   $"&dns_brute=false&dns_lookup=false&proxies=false&shodan=false&take_over=false&api_scan=false&limit={limite}&start=0";
 
         var response = await _httpClient.GetAsync(url, cancellationToken);
         var raw = await response.Content.ReadAsStringAsync(cancellationToken);

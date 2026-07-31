@@ -5,6 +5,9 @@ import { interval, switchMap, takeWhile } from 'rxjs';
 import { NotificationService } from '../../../../../shared/services/notification.service';
 import { Pais } from '../../../../../shared/models/pais.model';
 import { PaisesService } from '../../../../../shared/services/paises.service';
+import { Nivel } from '../../../../../shared/models/nivel.model';
+import { NivelesService } from '../../../../../shared/services/niveles.service';
+import { NivelSliderComponent } from '../../../../../shared/ui/nivel-slider/nivel-slider.component';
 import { Herramienta } from '../../../models/herramienta.model';
 import { HerramientasService } from '../../../services/herramientas.service';
 import { Busqueda } from '../../models/busqueda.model';
@@ -14,19 +17,21 @@ const ESTADOS_EN_CURSO = ['queued', 'running'];
 
 @Component({
   selector: 'osint-busqueda-overview',
-  imports: [FormsModule],
+  imports: [FormsModule, NivelSliderComponent],
   templateUrl: './busqueda-overview.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BusquedaOverviewComponent implements OnInit {
   private readonly _herramientasService = inject(HerramientasService);
   private readonly _paisesService = inject(PaisesService);
+  private readonly _nivelesService = inject(NivelesService);
   private readonly _busquedaService = inject(BusquedaService);
   private readonly _notif = inject(NotificationService);
   private readonly _destroyRef = inject(DestroyRef);
 
   tipos = signal<Herramienta[]>([]);
   paises = signal<Pais[]>([]);
+  niveles = signal<Nivel[]>([]);
   busquedaActual = signal<Busqueda | null>(null);
   buscando = signal(false);
 
@@ -34,6 +39,7 @@ export class BusquedaOverviewComponent implements OnInit {
   objetivo = '';
   paisSeleccionado = '+51';
   numeroLocal = '';
+  nivelSeleccionado = 'medio';
 
   ngOnInit(): void {
     this._herramientasService.getAll().subscribe({
@@ -44,6 +50,7 @@ export class BusquedaOverviewComponent implements OnInit {
       error: () => this._notif.error('No se pudo cargar el catálogo de tipos de búsqueda.'),
     });
     this.paises.set(this._paisesService.getAll());
+    this.niveles.set(this._nivelesService.getAll());
   }
 
   get esTelefono(): boolean {
@@ -62,7 +69,7 @@ export class BusquedaOverviewComponent implements OnInit {
 
     this.buscando.set(true);
     this.busquedaActual.set(null);
-    this._busquedaService.iniciar({ tipo: this.tipoSeleccionado, objetivo: objetivoFinal }).subscribe({
+    this._busquedaService.iniciar({ tipo: this.tipoSeleccionado, objetivo: objetivoFinal, nivel: this.nivelSeleccionado }).subscribe({
       next: (res) => {
         if (res.success && res.data) {
           this.busquedaActual.set(res.data);
