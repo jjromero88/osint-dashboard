@@ -45,8 +45,8 @@ consolidada y trazable.
   encola con `System.Threading.Channels` + `BackgroundService`, procesa
   en paralelo.
 - Sin persistencia (no hay SQL conectado): las búsquedas viven en memoria
-  del proceso backend mientras corre. El historial de la sesión de UI
-  depende de que el backend siga arriba.
+  del proceso backend mientras corre. La UI en v0 solo busca y muestra el
+  resultado de la búsqueda actual — no lista búsquedas pasadas.
 - Sin autenticación: no hay login, no hay `[Authorize]`, no hay modelo de
   usuario. Consistente con "uso individual hoy".
 - Los 5 tools/wrappers corren como contenedores Docker locales
@@ -119,5 +119,5 @@ consolidada y trazable.
 
 Sin requisito específico más allá del piso estándar: foco visible,
 contraste suficiente sobre fondo oscuro, `prefers-reduced-motion`
-respetado (ver `design-system.md` §6), navegable por teclado en
-formularios e historial.
+respetado (ver `design-system.md` §6), formularios navegables por
+teclado.

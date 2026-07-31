@@ -189,4 +189,26 @@
   .badge-tool {
     @apply inline-flex items-center gap-1 rounded-[var(--radius-signal)] border border-line px-1.5 py-0.5 font-mono text-[0.7rem] uppercase tracking-[0.04em] text-ink-muted;
   }
+
+  /* Botón secundario chico (agregar/quitar entradas de un editor de
+     lista) — nunca lleva el peso visual de .btn-primary. */
+  .btn-icon {
+    @apply inline-flex shrink-0 items-center justify-center gap-1 rounded-[var(--radius-signal)] border border-line px-2 py-1 font-body text-xs font-semibold uppercase tracking-[0.04em] text-ink-muted transition-colors hover:border-accent-signal hover:text-accent-signal disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink-muted;
+  }
+
+  /* Variante para acciones destructivas puntuales (ej. quitar un input
+     de una lista) — rojo discreto en reposo, saturado + glow en
+     hover/focus. Segundo uso legítimo de --color-accent-danger además
+     de señalizar estado de error de búsqueda, ver design-system.md §1. */
+  .btn-icon-danger {
+    @apply inline-flex shrink-0 items-center justify-center gap-1 rounded-[var(--radius-signal)] border px-2 py-1 font-body text-xs font-semibold uppercase tracking-[0.04em] transition-colors;
+    border-color: color-mix(in srgb, var(--color-accent-danger) 35%, var(--color-line));
+    color: color-mix(in srgb, var(--color-accent-danger) 55%, var(--color-ink-muted));
+  }
+  .btn-icon-danger:hover,
+  .btn-icon-danger:focus-visible {
+    border-color: var(--color-accent-danger);
+    color: var(--color-accent-danger);
+    box-shadow: var(--shadow-status-danger);
+  }
 }

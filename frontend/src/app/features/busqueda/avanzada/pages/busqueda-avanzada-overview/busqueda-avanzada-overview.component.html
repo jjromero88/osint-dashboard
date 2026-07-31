@@ -1,43 +1,138 @@
 <h1 class="text-2xl uppercase tracking-[0.04em] text-ink">Búsqueda avanzada</h1>
 <p class="mt-2 max-w-[70ch] font-body text-sm text-ink-muted">
-  Varios datos de la misma persona a la vez. Escribe valores separados por coma en cada campo (puedes dejar
-  campos vacíos). Siempre se suma un pase agregado (SpiderFoot) por el primer valor no vacío de cada campo.
+  Hasta 5 valores por campo (puedes dejar campos vacíos). Siempre se suma un pase agregado (SpiderFoot) por el
+  primer valor no vacío de cada campo.
 </p>
+
+<ng-template #quitar let-lista="lista" let-index="index" let-campo="campo">
+  <button
+    type="button"
+    class="btn-icon-danger"
+    (click)="quitarInput(lista, index)"
+    [attr.aria-label]="'Quitar ' + campo + ' #' + (index + 1)"
+  >
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" class="size-3.5">
+      <path d="M3 3l10 10M13 3L3 13" stroke-linecap="round" />
+    </svg>
+  </button>
+</ng-template>
+
+<ng-template #agregar let-lista="lista" let-campo="campo">
+  @if (lista.length < 5) {
+    <button type="button" class="btn-icon self-start" (click)="agregarInput(lista)" [attr.aria-label]="'Agregar ' + campo">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" class="size-3.5">
+        <path d="M8 3v10M3 8h10" stroke-linecap="round" />
+      </svg>
+      Agregar
+    </button>
+  }
+</ng-template>
 
 <form class="panel mt-6 flex flex-col gap-4 p-5" (ngSubmit)="buscar()">
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-    <label class="flex flex-col gap-1.5">
+    <div class="flex flex-col gap-1.5">
       <span class="field-label">Usernames</span>
-      <input type="text" [(ngModel)]="usernames" name="usernames" placeholder="usuario_demo, demo_user88" class="field" />
-    </label>
-    <label class="flex flex-col gap-1.5">
-      <span class="field-label">Emails</span>
-      <input type="text" [(ngModel)]="emails" name="emails" placeholder="demo@example.com" class="field" />
-    </label>
-
-    <div class="flex items-end gap-2">
-      <label class="flex flex-col gap-1.5">
-        <span class="field-label">País (teléfonos)</span>
-        <select [(ngModel)]="paisTelefonos" name="paisTelefonos" class="field">
-          @for (p of paises(); track p.codigo + p.nombre) {
-            <option [value]="p.codigo">{{ p.nombre }} ({{ p.codigo }})</option>
+      @for (v of usernames; track $index) {
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            [(ngModel)]="usernames[$index]"
+            [name]="'usernames' + $index"
+            [placeholder]="$index === 0 ? 'usuario_demo' : 'demo_user88'"
+            class="field"
+          />
+          @if ($index > 0) {
+            <ng-container [ngTemplateOutlet]="quitar" [ngTemplateOutletContext]="{ lista: usernames, index: $index, campo: 'username' }" />
           }
-        </select>
-      </label>
-      <label class="flex flex-1 flex-col gap-1.5">
-        <span class="field-label">Teléfonos (números locales)</span>
-        <input type="text" [(ngModel)]="phones" name="phones" placeholder="912345678, 998765432" class="field" />
-      </label>
+        </div>
+      }
+      <ng-container [ngTemplateOutlet]="agregar" [ngTemplateOutletContext]="{ lista: usernames, campo: 'username' }" />
     </div>
 
-    <label class="flex flex-col gap-1.5">
+    <div class="flex flex-col gap-1.5">
+      <span class="field-label">Emails</span>
+      @for (v of emails; track $index) {
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            [(ngModel)]="emails[$index]"
+            [name]="'emails' + $index"
+            [placeholder]="$index === 0 ? 'demo@example.com' : ''"
+            class="field"
+          />
+          @if ($index > 0) {
+            <ng-container [ngTemplateOutlet]="quitar" [ngTemplateOutletContext]="{ lista: emails, index: $index, campo: 'email' }" />
+          }
+        </div>
+      }
+      <ng-container [ngTemplateOutlet]="agregar" [ngTemplateOutletContext]="{ lista: emails, campo: 'email' }" />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <span class="field-label">País (teléfonos)</span>
+      <select [(ngModel)]="paisTelefonos" name="paisTelefonos" class="field">
+        @for (p of paises(); track p.codigo + p.nombre) {
+          <option [value]="p.codigo">{{ p.nombre }} ({{ p.codigo }})</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <span class="field-label">Teléfonos (números locales)</span>
+      @for (v of phones; track $index) {
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            [(ngModel)]="phones[$index]"
+            [name]="'phones' + $index"
+            [placeholder]="$index === 0 ? '912345678' : '998765432'"
+            class="field"
+          />
+          @if ($index > 0) {
+            <ng-container [ngTemplateOutlet]="quitar" [ngTemplateOutletContext]="{ lista: phones, index: $index, campo: 'teléfono' }" />
+          }
+        </div>
+      }
+      <ng-container [ngTemplateOutlet]="agregar" [ngTemplateOutletContext]="{ lista: phones, campo: 'teléfono' }" />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
       <span class="field-label">Dominios</span>
-      <input type="text" [(ngModel)]="domains" name="domains" placeholder="empresa.com" class="field" />
-    </label>
-    <label class="flex flex-col gap-1.5">
+      @for (v of domains; track $index) {
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            [(ngModel)]="domains[$index]"
+            [name]="'domains' + $index"
+            [placeholder]="$index === 0 ? 'empresa.com' : ''"
+            class="field"
+          />
+          @if ($index > 0) {
+            <ng-container [ngTemplateOutlet]="quitar" [ngTemplateOutletContext]="{ lista: domains, index: $index, campo: 'dominio' }" />
+          }
+        </div>
+      }
+      <ng-container [ngTemplateOutlet]="agregar" [ngTemplateOutletContext]="{ lista: domains, campo: 'dominio' }" />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
       <span class="field-label">Nombres</span>
-      <input type="text" [(ngModel)]="names" name="names" placeholder="Juan Pérez" class="field" />
-    </label>
+      @for (v of names; track $index) {
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            [(ngModel)]="names[$index]"
+            [name]="'names' + $index"
+            [placeholder]="$index === 0 ? 'Juan Pérez' : ''"
+            class="field"
+          />
+          @if ($index > 0) {
+            <ng-container [ngTemplateOutlet]="quitar" [ngTemplateOutletContext]="{ lista: names, index: $index, campo: 'nombre' }" />
+          }
+        </div>
+      }
+      <ng-container [ngTemplateOutlet]="agregar" [ngTemplateOutletContext]="{ lista: names, campo: 'nombre' }" />
+    </div>
   </div>
 
   <button type="submit" [disabled]="buscando()" class="btn-primary self-start">
@@ -76,18 +171,3 @@
     </ul>
   </section>
 }
-
-<section class="mt-8">
-  <h2 class="text-lg uppercase tracking-[0.03em] text-ink">Historial de lotes</h2>
-  <ul class="mt-3 flex flex-col gap-2">
-    @for (l of historial(); track l.lote_id) {
-      <li class="panel animate-stagger-reveal flex flex-wrap items-center gap-3 px-4 py-3 font-body text-sm">
-        <span class="font-mono text-xs text-ink-muted">{{ l.lote_id }}</span>
-        <span class="text-ink-muted">{{ l.estado }}</span>
-        <span class="ml-auto font-mono text-xs text-ink-muted">{{ l.resumen.total_unico }} hallazgos</span>
-      </li>
-    } @empty {
-      <li class="font-body text-sm text-ink-muted">Sin lotes todavía.</li>
-    }
-  </ul>
-</section>

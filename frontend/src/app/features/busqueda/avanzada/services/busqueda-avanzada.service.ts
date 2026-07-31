@@ -15,8 +15,4 @@ export class BusquedaAvanzadaService {
   getById(loteId: string): Observable<ApiResponse<BusquedaAvanzada>> {
     return this._api.get<BusquedaAvanzada>(`/search/advanced/${loteId}`);
   }
-
-  getAll(): Observable<ApiResponse<BusquedaAvanzada[]>> {
-    return this._api.get<BusquedaAvanzada[]>('/search/advanced');
-  }
 }

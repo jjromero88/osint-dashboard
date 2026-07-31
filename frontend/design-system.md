@@ -46,10 +46,19 @@ clases Tailwind (`bg-void`, `text-ink`, `border-accent-signal`, etc.):
 **Estrategia de color**: "Committed" — fondo casi negro dominante (90%+ de
 la superficie), un acento saturado (`--color-accent-signal`, amarillo señal) que
 carga focus/CTAs/estados activos, y los 3 acentos de estado (success/
-danger/info) reservados exclusivamente para señalizar resultado de
-búsquedas (mapean directo a `NotificationService` y a los `estado` de
-`Busqueda`/`Lote`: `queued`/`running` → info, resultado con hallazgos →
-success, `error` → danger).
+danger/info) reservados para señalizar resultado de búsquedas (mapean
+directo a `NotificationService` y a los `estado` de `Busqueda`/`Lote`:
+`queued`/`running` → info, resultado con hallazgos → success, `error` →
+danger).
+
+**Segundo uso legítimo de `--color-accent-danger`**: acciones de UI
+destructivas puntuales (ej. quitar un input de un editor de lista, ver
+`.btn-icon-danger` en §7) — un eje semántico distinto ("esta acción
+tiene consecuencia") del de estado de búsqueda ("esta búsqueda falló").
+Para no confundir ambos usos: en reposo siempre **discreto** (mezclado
+con tokens neutros vía `color-mix()`, nunca a saturación completa fuera
+de un error real de búsqueda), y solo pasa a saturación completa +
+glow en hover/focus, momento en que la acción es inminente.
 
 ## 2. Tipografía
 
@@ -86,7 +95,7 @@ Escala: `4, 8, 12, 16, 20, 24, 32, 40, 48, 64`.
 - 4–8px: dentro de un mismo grupo (label+input, icono+texto).
 - 12–16px: entre campos de un formulario.
 - 24–32px: entre secciones dentro de una pantalla.
-- 48px+: separación entre bloques mayores (header vs. contenido vs. historial).
+- 48px+: separación entre bloques mayores (header vs. contenido de la pantalla).
 
 Ancho máx. de contenido: `1280px` centrado. Breakpoints: los estándar de
 Tailwind (`sm 640 / md 768 / lg 1024 / xl 1280 / 2xl 1536`) — la lista de
@@ -98,8 +107,8 @@ un CMS de terceros, no una decisión de diseño real.
 - Radio por defecto: **0px–2px** (esquinas casi rectas — lenguaje de panel
   HUD, no de app "friendly").
 - **Elemento firma del proyecto**: esquina superior-derecha con corte
-  diagonal (`clip-path`) de 12px en cards/paneles principales (resultado de
-  búsqueda, cards de historial) — un único acento geométrico repetido, no
+  diagonal (`clip-path`) de 12px en cards/paneles principales (formulario,
+  resultado de búsqueda) — un único acento geométrico repetido, no
   decoración dispersa. El resto de la UI se mantiene sobria.
 - Sin blur / backdrop-blur en ningún componente (anti-patrón detectado en
   ambas fuentes — consistente con el look "panel duro", no "glassmorphism").
@@ -132,7 +141,7 @@ Patrones (basados en los keyframes reales extraídos: `hxafter`,
   mientras `estado` es `queued`/`running` (reemplaza un spinner genérico).
   1.2s, `ease-in-out`, loop mientras dure el polling.
 - **stagger-reveal**: entrada escalonada (~40ms de delta) de items de
-  historial/hallazgos al cargar, `fadeIn` + `translateY(4px)→0`.
+  señales/hallazgos al cargar, `fadeIn` + `translateY(4px)→0`.
 - Duración general: 150–300ms micro-interacciones, 300–500ms transiciones
   de página/sección. Enter `ease-out`, exit `ease-in`.
 - **Obligatorio**: toda animación respeta `prefers-reduced-motion: reduce`
@@ -158,6 +167,13 @@ No se reinventa la estructura funcional — solo se reviste:
   estado (`color-mix` sobre `--bg-surface`, no un `border-left` de color —
   ban de `craft-floor`), ícono de estado + glow del token correspondiente
   (§5), `glitch-flicker` solo en error.
+- **Editor de lista** (usernames/emails/teléfonos/dominios/nombres en
+  búsqueda avanzada, hasta 5 entradas por campo) → botón `.btn-icon`
+  ("Agregar", ícono SVG "+", gris→amarillo en hover, mismo lenguaje que
+  el resto de la UI interactiva) y `.btn-icon-danger` ("×" quitar,
+  ícono SVG, rojo discreto en reposo → rojo saturado + glow en hover —
+  ver segundo uso de `accent-danger` en §1). Nunca Unicode/emoji como
+  ícono — SVG propio de un solo trazo.
 
 ## 8. Do's / Don'ts
 

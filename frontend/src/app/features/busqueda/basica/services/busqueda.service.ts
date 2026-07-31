@@ -15,8 +15,4 @@ export class BusquedaService {
   getById(id: string): Observable<ApiResponse<Busqueda>> {
     return this._api.get<Busqueda>(`/search/${id}`);
   }
-
-  getAll(): Observable<ApiResponse<Busqueda[]>> {
-    return this._api.get<Busqueda[]>('/search');
-  }
 }

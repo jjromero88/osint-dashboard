@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { interval, switchMap, takeWhile } from 'rxjs';
 import { NotificationService } from '../../../../../shared/services/notification.service';
@@ -10,12 +11,12 @@ import { BusquedaAvanzadaService } from '../../services/busqueda-avanzada.servic
 
 const ESTADOS_EN_CURSO = ['queued', 'running'];
 
-// Inputs de texto separados por coma en vez de un editor de listas
-// dedicado — suficiente para el volumen de datos de este flujo (máx. 5
-// valores por campo, ver validador de backend).
+// Cada campo es un array de hasta 5 entradas (mismo límite que valida
+// el backend, ver BusquedaAvanzadaRequestValidator.MaxPorCampo) con
+// botones agregar/quitar en el template.
 @Component({
   selector: 'osint-busqueda-avanzada-overview',
-  imports: [FormsModule],
+  imports: [FormsModule, NgTemplateOutlet],
   templateUrl: './busqueda-avanzada-overview.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -26,31 +27,37 @@ export class BusquedaAvanzadaOverviewComponent implements OnInit {
   private readonly _destroyRef = inject(DestroyRef);
 
   loteActual = signal<BusquedaAvanzada | null>(null);
-  historial = signal<BusquedaAvanzada[]>([]);
   buscando = signal(false);
   paises = signal<Pais[]>([]);
 
-  usernames = '';
-  emails = '';
-  phones = '';
+  usernames: string[] = [''];
+  emails: string[] = [''];
+  phones: string[] = [''];
   paisTelefonos = '+51';
-  domains = '';
-  names = '';
+  domains: string[] = [''];
+  names: string[] = [''];
 
   ngOnInit(): void {
     this.paises.set(this._paisesService.getAll());
-    this._cargarHistorial();
+  }
+
+  protected agregarInput(lista: string[]): void {
+    if (lista.length < 5) lista.push('');
+  }
+
+  protected quitarInput(lista: string[], index: number): void {
+    lista.splice(index, 1);
   }
 
   buscar(): void {
     const dto = {
-      usernames: this._aLista(this.usernames),
-      emails: this._aLista(this.emails),
+      usernames: this._limpiar(this.usernames),
+      emails: this._limpiar(this.emails),
       // El mismo país aplica a todos los números de este campo — si el usuario ya
       // escribió un '+código' propio en una entrada puntual, se respeta tal cual.
-      phones: this._aLista(this.phones).map((n) => (n.startsWith('+') ? n : `${this.paisTelefonos}${n}`)),
-      domains: this._aLista(this.domains),
-      names: this._aLista(this.names),
+      phones: this._limpiar(this.phones).map((n) => (n.startsWith('+') ? n : `${this.paisTelefonos}${n}`)),
+      domains: this._limpiar(this.domains),
+      names: this._limpiar(this.names),
     };
 
     if (dto.usernames.length + dto.emails.length + dto.phones.length + dto.domains.length + dto.names.length === 0) {
@@ -94,7 +101,6 @@ export class BusquedaAvanzadaOverviewComponent implements OnInit {
           this.loteActual.set(res.data);
           if (!ESTADOS_EN_CURSO.includes(res.data.estado)) {
             this.buscando.set(false);
-            this._cargarHistorial();
           }
         },
         error: () => {
@@ -104,20 +110,8 @@ export class BusquedaAvanzadaOverviewComponent implements OnInit {
       });
   }
 
-  private _cargarHistorial(): void {
-    this._service.getAll().subscribe({
-      next: (res) => {
-        if (res.success) this.historial.set(res.data ?? []);
-      },
-      error: () => this._notif.error('No se pudo cargar el historial.'),
-    });
-  }
-
-  private _aLista(valor: string): string[] {
-    return valor
-      .split(',')
-      .map((v) => v.trim())
-      .filter((v) => v.length > 0);
+  private _limpiar(lista: string[]): string[] {
+    return lista.map((v) => v.trim()).filter((v) => v.length > 0);
   }
 
   protected _estadoTexto(estado: string): string {

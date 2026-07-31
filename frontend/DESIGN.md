@@ -127,7 +127,13 @@ ese estado real.
 
 ### Status (semántico, no de marca)
 - **Confirm Green** (`#39ff14`): resultado final sin error ("listo").
-- **Alert Red** (`#ff2b4c`): `estado === 'failed'` o `error` presente.
+- **Alert Red** (`#ff2b4c`): dos usos legítimos, distintos entre sí —
+  (1) `estado === 'failed'` o `error` presente en una búsqueda, siempre
+  a saturación completa; (2) acciones de UI destructivas puntuales
+  (`.btn-icon-danger`, ej. quitar un input del editor de lista de
+  búsqueda avanzada) — acá **discreto en reposo** (`color-mix()` con
+  tokens neutros) y solo a saturación completa + glow en hover/focus,
+  para no confundirse con un error real de búsqueda.
 - **Caution Amber** (`#f9c80e`): reservado para advertencias (sin uso
   todavía en las 3 pantallas actuales).
 
@@ -136,6 +142,11 @@ ese estado real.
 acento de marca por pantalla. Los colores de estado no compiten con
 él — se activan uno a la vez, ligados al `estado` real de una búsqueda,
 nunca como decoración simultánea.
+**The Danger-Means-Consequence Rule.** El rojo fuera de un error real de
+búsqueda solo aparece discreto en reposo, nunca a saturación completa —
+esa saturación queda reservada para "esta búsqueda falló" o para el
+momento exacto en que una acción destructiva está por ejecutarse
+(hover/focus de `.btn-icon-danger`).
 
 ## Typography
 
@@ -231,8 +242,15 @@ redondeadas grandes, recortes múltiples, biselados).
   mayúsculas + tracking `0.05em`, padding `8px 16px`.
 - **Disabled (`buscando()`):** mismo color, `opacity: 0.7` +
   `status-pulse` (1.2s loop) — comunica "trabajando", no error.
-- No hay variante secundaria/ghost todavía — las 3 pantallas solo tienen
-  una acción primaria por formulario.
+- **Icon (`.btn-icon`/`.btn-icon-danger`, secundarios):** botones chicos
+  de acción puntual en el editor de lista de búsqueda avanzada — nunca
+  el peso visual de `.btn-primary`. `.btn-icon` ("Agregar", ícono SVG
+  "+"): borde/texto `circuit-line`/`static-gray` en reposo →
+  `signal-yellow` en hover, mismo lenguaje que el resto de la UI
+  interactiva. `.btn-icon-danger` ("×" quitar, ícono SVG): borde/texto
+  rojo discreto en reposo (`color-mix()`, ver Colors) → rojo saturado +
+  glow `status-danger` en hover/focus — la única vez que el rojo se ve
+  a saturación completa fuera de un error real de búsqueda.
 
 ### Badges (`.badge-tool`)
 - **Style:** mono JetBrains Mono, mayúsculas, borde 1px `circuit-line`,

@@ -27,7 +27,6 @@ export class BusquedaOverviewComponent implements OnInit {
 
   tipos = signal<Herramienta[]>([]);
   paises = signal<Pais[]>([]);
-  historial = signal<Busqueda[]>([]);
   busquedaActual = signal<Busqueda | null>(null);
   buscando = signal(false);
 
@@ -45,7 +44,6 @@ export class BusquedaOverviewComponent implements OnInit {
       error: () => this._notif.error('No se pudo cargar el catálogo de tipos de búsqueda.'),
     });
     this.paises.set(this._paisesService.getAll());
-    this._cargarHistorial();
   }
 
   get esTelefono(): boolean {
@@ -98,7 +96,6 @@ export class BusquedaOverviewComponent implements OnInit {
           this.busquedaActual.set(res.data);
           if (!ESTADOS_EN_CURSO.includes(res.data.estado)) {
             this.buscando.set(false);
-            this._cargarHistorial();
           }
         },
         error: () => {
@@ -106,15 +103,6 @@ export class BusquedaOverviewComponent implements OnInit {
           this.buscando.set(false);
         },
       });
-  }
-
-  private _cargarHistorial(): void {
-    this._busquedaService.getAll().subscribe({
-      next: (res) => {
-        if (res.success) this.historial.set(res.data ?? []);
-      },
-      error: () => this._notif.error('No se pudo cargar el historial.'),
-    });
   }
 
   protected _estadoTexto(estado: string, error: string | null): string {
